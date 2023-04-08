@@ -1,13 +1,16 @@
-import {createUserWithEmailAndPassword} from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import React, { useState } from "react";
 import styled from "styled-components";
 import BackgroundImage from "../components/BackgroundImage";
-import {firebaseAuth} from "../utils/firebase-config";
+import { firebaseAuth } from "../utils/firebase-config";
 import Header from "../components/Header";
+import {useNavigate } from "react-router-dom";
 export default function Signup() {
   // Crear un estado
   // Mostrar  el boton de contraseña o el boton de inicio
   const [showPassword, setShowPassword] = useState(false);
+  // Constante navegate
+  const navigate = useNavigate();
   // Valores de Formulario
   const [formValues, setFormValues] = useState({
     email: "",
@@ -29,6 +32,11 @@ export default function Signup() {
       ); /*Ayudara a detectar el error y no rompera la aplicacion*/
     }
   };
+
+  onAuthStateChanged(firebaseAuth, (currentUser) => {
+    // Si hay un usuario actual navegaremos al componente / que es el componente netflix
+    if (currentUser) navigate("/")
+  })
   return (
     <Container showPassword={showPassword}>
       {/* Imagen de fondo */}
@@ -108,7 +116,7 @@ const Container = styled.div`
     .form {
       display: grid;
       grid-template-columns: ${({ showPassword }) =>
-        showPassword ? "1fr 1fr" : "2fr 1fr"};
+    showPassword ? "1fr 1fr" : "2fr 1fr"};
       width: 60%;
       input {
         color: #000;
